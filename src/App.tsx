@@ -1,10 +1,8 @@
-import WeatherPage from './pages/WeatherPage';
-import './App.css';
+import WeatherPage from './pages/WeatherPage/WeatherPage';
 
 const App: React.FC = () => {
   return (
     <div>
-      <h1>Weather App</h1>
       <WeatherPage />
     </div>
   );

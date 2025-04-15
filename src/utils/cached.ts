@@ -6,12 +6,12 @@ const CACHE_KEY = 'weatherCache';
 export const getCached = (city: string): WeatherData | null => {
   const cachedData = localStorage.getItem(CACHE_KEY);
   if (cachedData) {
-    const parsedData = JSON.parse(cachedData);
-    const cacheTimestamp = parsedData.timestamp;
+    const parsedData: { [key: string]: { data: WeatherData, timestamp: number } } = JSON.parse(cachedData);
+    const cityCache = parsedData[city];
 
     // Return cached data if it's less than 5 minutes old
-    if (Date.now() - cacheTimestamp < 5 * 60 * 1000) {
-      return parsedData[city] || null;
+    if (cityCache && Date.now() - cityCache.timestamp < 5 * 60 * 1000) {
+      return cityCache.data;
     }
   }
   return null;
@@ -22,8 +22,11 @@ export const setCached = (city: string, data: WeatherData) => {
   const cachedData = localStorage.getItem(CACHE_KEY);
   const newCache = cachedData ? JSON.parse(cachedData) : {};
 
-  newCache[city] = data;
-  newCache.timestamp = Date.now();
+  // Save city-specific data along with timestamp
+  newCache[city] = {
+    data,
+    timestamp: Date.now(),
+  };
 
   localStorage.setItem(CACHE_KEY, JSON.stringify(newCache));
 };
